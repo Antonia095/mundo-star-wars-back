@@ -4,18 +4,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+import br.com.projeto.mundo_star_wars.exception.EntityNotFoundException;
 import br.com.projeto.mundo_star_wars.model.Usuario;
 import br.com.projeto.mundo_star_wars.repository.UsuarioRepository;
 import br.com.projeto.mundo_star_wars.service.AutenticacaoService;
 import br.com.projeto.mundo_star_wars.service.JWTService;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -33,11 +32,6 @@ class AutenticacaoServiceTest {
 
   @InjectMocks
   private AutenticacaoService autenticacaoService;
-
-  @BeforeEach
-  void setUp() {
-    MockitoAnnotations.openMocks(this);
-  }
 
   @Test
   @DisplayName("Deve retornar token quando as credencias forem válidas")
@@ -66,11 +60,11 @@ class AutenticacaoServiceTest {
 
     when(usuarioRepository.findByEmail(email)).thenReturn(Optional.empty());
 
-    RuntimeException ex = assertThrows(RuntimeException.class, () -> {
+    var exception = assertThrows(EntityNotFoundException.class, () -> {
       autenticacaoService.login(email, senha);
     });
 
-    assertEquals("Usuário não encontrado!", ex.getMessage());
+    assertEquals("Usuário não encontrado!", exception.getMessage());
   }
 
   @Test
