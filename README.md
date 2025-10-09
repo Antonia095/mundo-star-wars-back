@@ -179,8 +179,6 @@ docker run -d -p 27017:27017 --name mongo mongo
 
 Após executar a aplicação, acesse:
 - **Swagger UI**: `http://localhost:8080/swagger-ui.html`
-- **OpenAPI Docs**: `http://localhost:8080/api-docs`
-- **Health Check**: `http://localhost:8080/actuator/health`
 
 ### 📋 Exemplos de Uso
 
@@ -245,7 +243,7 @@ GET /api/conteudos?page=0&size=10&sortBy=dataCriacao&sortDir=desc
 
 ## 🧪 Testes
 
-O projeto possui cobertura completa de testes:
+O projeto possui cobertura de testes:
 
 ### 🔬 Testes Unitários
 - **Service Layer**: Testagem da lógica de negócio
@@ -256,11 +254,6 @@ O projeto possui cobertura completa de testes:
 - **Controller Layer**: Testes end-to-end da API
 - **Security**: Validação de autenticação e autorização
 - **Database**: Testes com MongoDB integrado
-
-### 📊 Cobertura
-- **Cobertura de código**: >90%
-- **Cenários de teste**: Happy path + edge cases
-- **Validação**: Dados válidos e inválidos
 
 ## 🚦 Tratamento de Erros
 
@@ -283,39 +276,10 @@ O projeto possui cobertura completa de testes:
 }
 ```
 
-## 📈 Monitoramento
-
-### Health Checks
-- **Endpoint**: `/actuator/health`
-- **Verificações**: Database connectivity, disk space, etc.
-
-### Métricas
-- **Endpoint**: `/actuator/metrics`
-- **Dados**: Performance, uso de memória, requests HTTP
-
-## 🔜 Roadmap
-
-### Próximas Funcionalidades
-- [ ] Sistema de likes/favoritos
-- [ ] Comentários em conteúdos
-- [ ] Upload de imagens
-- [ ] Sistema de notificações
-- [ ] API de busca avançada
-- [ ] Cache com Redis
-- [ ] Métricas com Micrometer
-- [ ] CI/CD pipeline
-
-### Melhorias Técnicas
-- [ ] Rate limiting
-- [ ] Audit trail
-- [ ] Versionamento da API
-- [ ] Internacionalização (i18n)
-- [ ] Documentação adicional
-
 ## 📄 Licença
 
 Este projeto é um projeto de estudos desenvolvido para aprendizado de tecnologias Java/Spring Boot, incluindo conceitos avançados de segurança, autorização, testes e boas práticas de desenvolvimento.
 
 ---
 
-**⭐ May the Force be with you!** 🌟
+⭐ *"Que a Força esteja com o código!"* ⭐
