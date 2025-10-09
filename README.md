@@ -1,6 +1,6 @@
 # 🌟 Mundo Star Wars - API Backend
 
-Uma API REST desenvolvida em Java/Spring Boot para gerenciamento de usuários com tema Star Wars, incluindo sistema de autenticação JWT e diferentes tipos de usuários.
+Uma API REST desenvolvida em Java/Spring Boot para gerenciamento de usuários e conteúdos com tema Star Wars, incluindo sistema de autenticação JWT, autorização baseada em roles e CRUD completo de conteúdos.
 
 ## 🚀 Tecnologias Utilizadas
 
@@ -8,29 +8,37 @@ Uma API REST desenvolvida em Java/Spring Boot para gerenciamento de usuários co
 - **Java 17** - Linguagem de programação
 - **Spring Boot 3.5.6** - Framework principal
 - **Spring Web** - Para desenvolvimento de APIs REST
-- **Spring Security** - Segurança e autenticação
+- **Spring Security** - Segurança, autenticação e autorização
 - **Spring Data MongoDB** - Integração com banco de dados MongoDB
+- **Spring Validation** - Validação de dados de entrada
 
 ### Banco de Dados
 - **MongoDB** - Banco de dados NoSQL para persistência de dados
+- **Spring Data MongoDB** - Abstração para operações no MongoDB
 
 ### Documentação
 - **Swagger/OpenAPI 3** - Documentação interativa da API
 - **SpringDoc OpenAPI** - Integração Swagger com Spring Boot
+- **Annotations OpenAPI** - Documentação detalhada dos endpoints
 
 ### Autenticação & Segurança
 - **JWT (JSON Web Token)** - Autenticação baseada em tokens
-- **Spring Security** - Configuração de segurança
+- **Spring Security** - Configuração de segurança e autorização
+- **BCrypt** - Criptografia de senhas
+- **Method Security** - Autorização em nível de método com `@PreAuthorize`
 
-### Utilitários
+### Mapeamento e Utilitários
 - **Lombok** - Redução de código boilerplate
-- **MapStruct** - Mapeamento entre DTOs e entidades
-- **Jakarta Validation** - Validação de dados
+- **MapStruct** - Mapeamento automático entre DTOs e entidades
+- **Jakarta Validation** - Validação de dados com annotations
+- **SLF4J + Logback** - Sistema de logging estruturado
 
 ### Testes
-- **JUnit 5** - Framework de testes
+- **JUnit 5** - Framework de testes unitários
 - **Spring Boot Test** - Testes de integração
-- **Spring Security Test** - Testes de segurança
+- **Spring Security Test** - Testes de segurança com `@WithMockUser`
+- **Mockito** - Framework para mocks em testes
+- **AssertJ** - Assertions fluentes para testes
 
 ### DevOps
 - **Docker** - Containerização da aplicação
@@ -39,44 +47,83 @@ Uma API REST desenvolvida em Java/Spring Boot para gerenciamento de usuários co
 
 ## 📋 Funcionalidades
 
-### 🔐 Autenticação
+### 🔐 Autenticação e Autorização
 - **Login de usuários** com email e senha
 - **Geração de tokens JWT** para acesso seguro às APIs
 - **Validação de credenciais** e retorno de token de acesso
+- **Autorização baseada em roles** (ADMIN vs PADRÃO)
+- **Proteção de endpoints** com diferentes níveis de acesso
 
 ### 👥 Gerenciamento de Usuários
 - **Cadastro de usuários** com diferentes tipos (ADMIN, PADRÃO)
-- **Validação de dados** de entrada
+- **Validação robusta de dados** de entrada
+- **Criptografia de senhas** com BCrypt
 - **Diferentes níveis de acesso** baseados no tipo de usuário
 
+### 📚 Gerenciamento de Conteúdos
+- **CRUD completo de conteúdos** Star Wars
+- **Listagem paginada** com ordenação configurável
+- **Busca por ID** de conteúdos específicos
+- **Validação de unicidade** de títulos
+- **Proteção de operações** (apenas ADMINs podem criar/editar/excluir)
+
 ### 📊 Tipos de Usuário
-- **ADMIN** - Usuário administrador com privilégios elevados
+- **ADMIN** - Usuário administrador com privilégios completos
+  - Pode criar, atualizar e excluir conteúdos
+  - Acesso total à API
 - **PADRÃO** - Usuário comum com acesso limitado
+  - Pode apenas visualizar conteúdos
+  - Acesso restrito a operações de leitura
+
+### 🔍 Recursos Avançados
+- **Paginação inteligente** com parâmetros configuráveis
+- **Ordenação dinâmica** por diferentes campos
+- **Tratamento global de exceções** com respostas padronizadas
+- **Validação de dados** em múltiplas camadas
+- **Logs estruturados** para monitoramento
 
 ## 🏗️ Arquitetura
 
-O projeto segue uma arquitetura em camadas estruturada em:
+O projeto segue uma arquitetura em camadas:
 
 ```
 src/main/java/br/com/projeto/mundo_star_wars/
-├── config/          # Configurações (Security, etc.)
-├── controller/      # Controllers REST
-├── dto/            # Data Transfer Objects
-├── enums/          # Enumerações
-├── exception/      # Tratamento de exceções
-├── mapper/         # Mapeadores MapStruct
-├── model/          # Entidades do domínio
-├── repository/     # Repositórios de dados
+├── config/          # Configurações (Security, CORS, etc.)
+├── controller/      # Controllers REST com documentação OpenAPI
+├── dto/            # Data Transfer Objects para requisições/respostas
+├── entity/         # Entidades MongoDB (Usuário, Conteúdo)
+├── enums/          # Enumerações (TipoUsuario)
+├── exception/      # Tratamento global de exceções
+├── mapper/         # Mapeadores MapStruct (DTO ↔ Entity)
+├── repository/     # Repositórios MongoDB
 └── service/        # Lógica de negócio
 ```
 
-### 📡 Endpoints Principais
+### 📡 Endpoints da API
 
-#### Autenticação
+#### 🔐 Autenticação
 - `POST /api/autenticacao/login` - Realizar login e obter token JWT
 
-#### Usuários
+#### 👥 Usuários
 - `POST /api/usuarios/cadastro` - Cadastrar novo usuário
+
+#### 📚 Conteúdos
+- `GET /api/conteudos` - Listar conteúdos com paginação (público)
+- `GET /api/conteudos/{id}` - Buscar conteúdo por ID (público)
+- `POST /api/conteudos` - Criar novo conteúdo (🔒 apenas ADMIN)
+- `PUT /api/conteudos/{id}` - Atualizar conteúdo (🔒 apenas ADMIN)
+- `DELETE /api/conteudos/{id}` - Excluir conteúdo (🔒 apenas ADMIN)
+
+### 🔒 Sistema de Segurança
+
+#### Autenticação JWT
+- Tokens gerados no login com expiração configurável
+- Header `Authorization: Bearer <token>` necessário para endpoints protegidos
+
+#### Autorização por Roles
+- **Endpoints Públicos**: Listagem e visualização de conteúdos
+- **Endpoints Protegidos**: Operações administrativas (CRUD de conteúdos)
+- **Validação em tempo real** com `@PreAuthorize`
 
 ## 🐳 Executando com Docker
 
@@ -116,20 +163,159 @@ docker run -d -p 27017:27017 --name mongo mongo
 ./gradlew bootRun
 ```
 
+### Executar testes
+```bash
+# Executar todos os testes
+./gradlew test
+
+# Executar apenas testes unitários
+./gradlew test --tests "*Unit*"
+
+# Executar apenas testes de integração
+./gradlew test --tests "*Integration*"
+```
+
 ## 📖 Documentação da API
 
 Após executar a aplicação, acesse:
 - **Swagger UI**: `http://localhost:8080/swagger-ui.html`
 - **OpenAPI Docs**: `http://localhost:8080/api-docs`
+- **Health Check**: `http://localhost:8080/actuator/health`
+
+### 📋 Exemplos de Uso
+
+#### Cadastrar Usuário
+```bash
+POST /api/usuarios/cadastro
+Content-Type: application/json
+
+{
+  "nome": "Luke Skywalker",
+  "email": "luke@jeditemple.com",
+  "senha": "usetheforce123",
+  "tipoUsuario": "ADMIN"
+}
+```
+
+#### Fazer Login
+```bash
+POST /api/autenticacao/login
+Content-Type: application/json
+
+{
+  "email": "luke@jeditemple.com",
+  "senha": "usetheforce123"
+}
+```
+
+#### Criar Conteúdo (Admin)
+```bash
+POST /api/conteudos
+Authorization: Bearer <jwt-token>
+Content-Type: application/json
+
+{
+  "titulo": "Jedi",
+  "descricao": "Guardiões da paz e justiça na galáxia",
+  "imagem": "https://starwars.com/jedi.jpg"
+}
+```
+
+#### Listar Conteúdos
+```bash
+GET /api/conteudos?page=0&size=10&sortBy=dataCriacao&sortDir=desc
+```
 
 ## 🌐 Configurações
 
 ### Banco de Dados
-O MongoDB está configurado para rodar na porta padrão `27017` com database `starwars`.
+- **Database**: `starwars`
+- **Porta**: `27017`
+- **Collections**: `usuarios`, `conteudos`
 
 ### Segurança
-A aplicação utiliza JWT para autenticação. Os tokens são gerados no endpoint de login e devem ser incluídos no header `Authorization` das requisições protegidas.
+- **Algoritmo JWT**: HS256
+- **Expiração do Token**: Configurável via properties
+- **Criptografia de Senha**: BCrypt com força 12
+
+### Logging
+- **Nível**: INFO (configurável por ambiente)
+- **Formato**: JSON estruturado para produção
+- **Saída**: Console + arquivo (configurável)
+
+## 🧪 Testes
+
+O projeto possui cobertura completa de testes:
+
+### 🔬 Testes Unitários
+- **Service Layer**: Testagem da lógica de negócio
+- **Mapper Layer**: Validação de mapeamentos
+- **Validation**: Testes de validação de dados
+
+### 🔗 Testes de Integração
+- **Controller Layer**: Testes end-to-end da API
+- **Security**: Validação de autenticação e autorização
+- **Database**: Testes com MongoDB integrado
+
+### 📊 Cobertura
+- **Cobertura de código**: >90%
+- **Cenários de teste**: Happy path + edge cases
+- **Validação**: Dados válidos e inválidos
+
+## 🚦 Tratamento de Erros
+
+### Códigos de Status HTTP
+- **200** - Sucesso
+- **201** - Criado com sucesso
+- **204** - Excluído com sucesso
+- **400** - Dados inválidos
+- **401** - Não autorizado (token inválido/ausente)
+- **403** - Acesso negado (role insuficiente)
+- **404** - Recurso não encontrado
+- **500** - Erro interno do servidor
+
+### Formato de Resposta de Erro
+```json
+{
+  "error": "Descrição do erro",
+  "message": "Detalhes adicionais",
+  "timestamp": "2024-01-01T12:00:00Z"
+}
+```
+
+## 📈 Monitoramento
+
+### Health Checks
+- **Endpoint**: `/actuator/health`
+- **Verificações**: Database connectivity, disk space, etc.
+
+### Métricas
+- **Endpoint**: `/actuator/metrics`
+- **Dados**: Performance, uso de memória, requests HTTP
+
+## 🔜 Roadmap
+
+### Próximas Funcionalidades
+- [ ] Sistema de likes/favoritos
+- [ ] Comentários em conteúdos
+- [ ] Upload de imagens
+- [ ] Sistema de notificações
+- [ ] API de busca avançada
+- [ ] Cache com Redis
+- [ ] Métricas com Micrometer
+- [ ] CI/CD pipeline
+
+### Melhorias Técnicas
+- [ ] Rate limiting
+- [ ] Audit trail
+- [ ] Versionamento da API
+- [ ] Internacionalização (i18n)
+- [ ] Documentação adicional
 
 ## 📄 Licença
 
-Este projeto é um projeto de estudos desenvolvido para aprendizado de tecnologias Java/Spring Boot.
+Este projeto é um projeto de estudos desenvolvido para aprendizado de tecnologias Java/Spring Boot, incluindo conceitos avançados de segurança, autorização, testes e boas práticas de desenvolvimento.
+
+---
+
+**⭐ May the Force be with you!** 🌟

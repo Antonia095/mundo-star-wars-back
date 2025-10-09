@@ -1,21 +1,39 @@
-version: '3.8'
 services:
-  mongo:
-    image: mongo
-    container_name: mongo
+  mongodb:
+    image: mongo:7.0
+    container_name: mongo-starwars
+    restart: always
     ports:
-      - 27017:27017
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: starwars
     volumes:
-      - mongo-data:/data/db
+      - mongo_data:/data/db
+    networks:
+      - starwars-network
 
   app:
-    build: .
-    depends_on:
-      - mongo
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: starwars-app
+    restart: always
     ports:
-      - 8080:8080
+      - "8080:8080"
     environment:
-      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/starwars
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/starwars
+      SPRING_PROFILES_ACTIVE: docker
+      JWT_SECRET: minha-chave-secreta-super-segura-para-desenvolvimento-starwars-2024
+      JWT_EXPIRATION: 86400000
+      JAVA_OPTS: "-Dfile.encoding=UTF-8"
+    depends_on:
+      - mongodb
+    networks:
+      - starwars-network
 
 volumes:
-  mongo-data:
+  mongo_data:
+
+networks:
+  starwars-network:
+    driver: bridge
