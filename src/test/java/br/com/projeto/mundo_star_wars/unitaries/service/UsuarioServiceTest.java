@@ -43,7 +43,7 @@ class UsuarioServiceTest {
   @DisplayName("Deve cadastrar usuário administrador com sucesso")
   void deveCadastrarUsuarioAdministradorComSucesso() {
 
-    var idUsuario = 1L;
+    var idUsuario = "1";
     var senhaCriptografada = "senhaCriptografada";
     var tipoUsuario = ADMIN;
 

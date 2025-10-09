@@ -45,7 +45,7 @@ class UsuarioControllerTest {
     usuarioDto.setSenha("senha123");
 
     var responseDto = UsuarioResponseDto.builder()
-        .id(1L)
+        .id("1")
         .email("admin@email.com")
         .tipoUsuario(ADMIN)
         .build();

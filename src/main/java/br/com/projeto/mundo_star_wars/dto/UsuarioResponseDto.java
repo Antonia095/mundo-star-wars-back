@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UsuarioResponseDto {
 
-  Long id;
+  String id;
 
   String email;
 
